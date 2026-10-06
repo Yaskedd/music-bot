@@ -1,1 +1,3 @@
-![tracks menu](B:\Надежда\Pictures\Screenshots\1.jpg)
+![tracks menu](media\1.png)
+
+![finding menu](media\2.png)
