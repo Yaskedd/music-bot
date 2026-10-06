@@ -2,13 +2,13 @@ from aiogram import Router, types, F, html
 from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile, InputMediaPhoto
 from aiogram.fsm.context import FSMContext
-from buttons import reply_menu, all_albums,iceman, Graduation, yes_not
-from function import find_track
+from buttons import reply_menu, all_albums,iceman, Graduation, yes_not, subscribe
 from track_db import list, TRACKS_GRAD, TRACKS_ICE
 from FSM import TrackSearch
 from bot_instance import bot
+from function import check_subscription, find_track
 
-router = Router()
+router = Router()  
 
 @router.message(Command('start'))
 async def cmd_start(message: Message):
@@ -23,6 +23,7 @@ async def cmd_start(message: Message):
     '• 🆓Всё абсолютно <b>бесплатно</b>\nБольше не нужно платить сервисам за подписку\n\nЧтобы начать,выбери нужную кнопку ниже⬇',
     parse_mode='HTML',reply_markup=reply_menu())
 
+
 @router.message(Command('catalog'))
 async def cmd_catalog(message: Message):
     photo_menu = FSInputFile('traks_menu.png')
@@ -33,7 +34,7 @@ async def cmd_catalog(message: Message):
 async def cmd_search(message: Message):
     Photo = FSInputFile('search_menu.jpg')
     await message.answer_photo(Photo, caption='🎵Вы находитесь в главном меню поиска\n\n'
-    'Я помогу найти желанный трек или альбов\n\nДля этого просто отправь мне ключевое слово,трека,который вы ищите\n'
+    'Я помогу найти желанный трек или альбом\n\nДля этого просто отправь мне ключевое слово,трека,который вы ищите\n'
     'Я тщательно поищу его у себя в библиотеке😉')
 # ловит дату,из ключей словаря TRACKS_ICE
 # TRACKS_ICE.keys() - получает все ключи словаря
@@ -67,12 +68,29 @@ async def send_grad_track(callback: types.CallbackQuery):
         'back',
         'Graduation',
         'download_ice',
-        'download_grad'
+        'download_grad',
+        'issub'
     })
 )
 async def process_menu_buttons(callback: types.CallbackQuery):
     data = callback.data
 
+    if data == 'issub':
+        chesk = await check_subscription(
+            bot=callback.bot,
+            user_id=callback.from_user.id
+        )
+        if chesk:
+            await callback.message.edit_text(
+                '✅Успешно')
+            await cmd_start(message=callback.message)
+            return
+        else:
+            await callback.message.edit_text(
+                '❌Вы всё ещё не подписаны',
+                reply_markup=subscribe()
+            )
+        await callback.answer()
     if data == 'iceman':
         photo = FSInputFile('iceman.jpg')
         caption = 'Drake - ICEMAN\n\n2026\n\nСписок треков⬇'
@@ -139,7 +157,6 @@ async def process_menu_buttons(callback: types.CallbackQuery):
             )
 
     await callback.answer()
-
 
 @router.callback_query(F.data.startswith('confirm'), TrackSearch.waiting_confirmation) 
 # F.data.startswith('confirm') - проверяет,начинается ли строка,которую мы пришили к кнопе с подстроки confirm
@@ -209,7 +226,7 @@ async def traks_menu(message: Message):
 async def search_track(message: Message):
     Photo = FSInputFile('search_menu.jpg')
     await message.answer_photo(Photo, caption='🎵Вы находитесь в главном меню поиска\n\n'
-        'Я помогу найти желанный трек или альбов\n\nДля этого просто отправь мне ключевое слово,трека,который вы ищите\n'
+        'Я помогу найти желанный трек или альбом\n\nДля этого просто отправь мне ключевое слово,трека,который вы ищите\n'
         'Я тщательно поищу его у себя в библиотеке😉')
 
 @router.message(F.text == '🔧Тех. поддержка')

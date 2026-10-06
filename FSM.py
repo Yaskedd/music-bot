@@ -1,3 +1,7 @@
-from aiogram.fsm.state import StatesGroup, State 
-class TrackSearch(StatesGroup):
+from aiogram.fsm.state import StatesGroup, State # импортируем все нужные функции для построения класса
+class TrackSearch(StatesGroup): # создаем класс и передаём ему функцию StatesGroup
     waiting_confirmation = State()
+    # waiting_confirmation - создаём параметр,в неё мы будем заполнять состояние
+    # к нему треки НИКАК не относятся,он просто отвечает на вопрос 'где сейчас находится пользователь'
+        # он выбирает/подтверждает трек
+        # после нажатия yes сценари заполнения этого параметра заканчивается

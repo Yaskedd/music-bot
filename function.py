@@ -1,3 +1,5 @@
+from aiogram import Bot
+
 def find_track(user_message, tracks_db):
     query = user_message.lower().strip()
     # подготваливаем наше сообщение - приводим всё в нижний регист и убираем пробелы
@@ -6,11 +8,11 @@ def find_track(user_message, tracks_db):
     for track in tracks_db:
         # в переменной title получаем доступ ко всем названиям песени из спискаи и по умолчаню тут пробел в значении
         title = track.get('title', '')
-        # указываем,что title может быть списком
+        # проверяем,является ли title списком
         if isinstance(title, list):
             # перебираем всё названия песе из списка,форматируем в строку и ставим в значение на место пробела
             title = ' '.join(str(t) for t in title)
-            # проверяем,что если у нас сообщение пользователя совпало с тем,что в нашем списке
+            # все элементы из списка превращаем в строку и методом join разделяем пробелом
         if query in title.lower():
             # тогда добавляем в result все характеристики совпавших песен
             result.append({
@@ -20,3 +22,16 @@ def find_track(user_message, tracks_db):
                 'duration': track.get('duration')
             })
     return result 
+
+CHAT_ID = '@test_chanel38'
+
+async def check_subscription(bot: Bot, user_id: int) -> bool:
+    quer = await bot.get_chat_member(
+        chat_id=CHAT_ID,
+        user_id=user_id
+    )
+    return quer.status in(
+        'creator',
+        'administrator',
+        'member'
+    )

@@ -72,3 +72,10 @@ def yes_not(track_id: str, index: int, total: int):
     builder.button(text='❌Нет,это не он', callback_data=f'confirm:no:{index}')
     builder.adjust(1, 1)
     return builder.as_markup()
+
+def subscribe():
+    builder  = InlineKeyboardBuilder()
+    builder.button(text='Подписаться', url='https://t.me/test_chanel38')
+    builder.button(text='Проверить подписку', callback_data='issub')
+    builder.adjust(1,1)
+    return builder.as_markup()
