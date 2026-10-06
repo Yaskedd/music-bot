@@ -1,9 +1,36 @@
-.env
+# Virtual environment
 .venv/
 venv/
+env/
+
+# Python cache
 __pycache__/
 *.py[cod]
-.idea/
+*$py.class
+
+# Environment variables
+.env
+.env.*
+
+# IDE
 .vscode/
+.idea/
+
+# PyCharm
+*.iml
+
+# Testing
 .pytest_cache/
+.coverage
+htmlcov/
+
+# Type checkers
 .mypy_cache/
+.pyright/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
